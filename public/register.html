@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registrarse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 text-gray-900">
+    <nav class="bg-white shadow mb-6">
+      <div
+        class="container mx-auto px-6 py-4 flex justify-between items-center"
+      >
+        <a href="index.html" class="text-xl font-bold text-blue-600"
+          >Mi Tienda</a
+        >
+        <div class="space-x-4">
+          <a href="index.html" class="text-gray-700 hover:text-blue-600"
+            >Productos</a
+          >
+          <a href="carrito.html" class="text-gray-700 hover:text-blue-600"
+            >Carrito</a
+          >
+          <a href="login.html" class="text-gray-700 hover:text-blue-600"
+            >Login</a
+          >
+          <a href="register.html" class="text-gray-700 hover:text-blue-600"
+            >Registro</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mx-auto p-6 max-w-md">
+      <h1 class="text-3xl font-bold mb-6">Crear cuenta</h1>
+      <form id="formRegister" class="bg-white p-6 shadow rounded">
+        <input
+          type="email"
+          id="email"
+          placeholder="Email"
+          class="w-full p-2 border mb-4"
+          required
+        />
+        <input
+          type="password"
+          id="password"
+          placeholder="Contraseña"
+          class="w-full p-2 border mb-4"
+          required
+        />
+        <button class="w-full bg-green-600 text-white py-2 rounded">
+          Registrarme
+        </button>
+      </form>
+      <p class="mt-4">
+        ¿Ya tenés cuenta?
+        <a href="login.html" class="text-blue-600 underline">Iniciar sesión</a>
+      </p>
+    </div>
+
+    <script type="module">
+      import { saveToken } from "./js/auth.js";
+
+      document
+        .getElementById("formRegister")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+
+          const res = await fetch("/api/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+
+          if (res.ok) {
+            alert("Usuario registrado correctamente");
+            window.location.href = "login.html";
+          } else {
+            const data = await res.json();
+            alert(data.message || "Error al registrarse");
+          }
+        });
+    </script>
+  </body>
+</html>

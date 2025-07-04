@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Carrito</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 text-gray-900">
+    <!-- Navbar -->
+    <nav class="bg-white shadow mb-6">
+      <div
+        class="container mx-auto px-6 py-4 flex justify-between items-center"
+      >
+        <a href="index.html" class="text-xl font-bold text-blue-600"
+          >Mi Tienda</a
+        >
+        <div class="space-x-4 flex items-center">
+          <a href="index.html" class="text-gray-700 hover:text-blue-600"
+            >Productos</a
+          >
+          <a href="carrito.html" class="text-gray-700 hover:text-blue-600"
+            >Carrito</a
+          >
+          <a
+            href="login.html"
+            id="btnLogin"
+            class="text-gray-700 hover:text-blue-600"
+            >Login</a
+          >
+          <a
+            href="register.html"
+            id="btnRegister"
+            class="text-gray-700 hover:text-blue-600"
+            >Registro</a
+          >
+          <button id="cerrarSesion" class="text-red-600 hover:underline hidden">
+            Cerrar sesión
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Contenido -->
+    <div class="container mx-auto p-6">
+      <h1 class="text-3xl font-bold mb-6">Tu carrito</h1>
+      <ul id="carrito" class="space-y-4 mb-6"></ul>
+      <button id="comprar" class="bg-green-600 text-white px-4 py-2 rounded">
+        Finalizar compra
+      </button>
+    </div>
+
+    <!-- Script -->
+    <script type="module">
+      import { getToken, logout } from "./js/auth.js";
+
+      const token = getToken();
+      const carrito = document.getElementById("carrito");
+      const comprarBtn = document.getElementById("comprar");
+
+      const btnLogout = document.getElementById("cerrarSesion");
+      const btnLogin = document.getElementById("btnLogin");
+      const btnRegister = document.getElementById("btnRegister");
+
+      if (token) {
+        btnLogout.classList.remove("hidden");
+        btnLogin.classList.add("hidden");
+        btnRegister.classList.add("hidden");
+        btnLogout.addEventListener("click", logout);
+      } else {
+        alert("Inicia sesión primero.");
+        location.href = "login.html";
+      }
+
+      fetch("/api/carrito", {
+        headers: { Authorization: "Bearer " + token },
+      })
+        .then(async (res) => {
+          const data = await res.json();
+          if (!res.ok) {
+            carrito.innerHTML = `<li class="text-gray-600">${data.message}</li>`;
+            comprarBtn.disabled = true;
+            comprarBtn.classList.add("opacity-50", "cursor-not-allowed");
+            return;
+          }
+
+          let total = 0;
+          data.forEach((item) => {
+            const li = document.createElement("li");
+            const subtotal = item.cantidad * item.Product.precio;
+            total += subtotal;
+            li.className = "bg-white p-4 rounded shadow";
+            li.innerHTML = `
+          <strong>${item.Product.nombre}</strong> x${item.cantidad} - $${item.Product.precio} (Subtotal: $${subtotal})
+        `;
+            carrito.appendChild(li);
+          });
+
+          const liTotal = document.createElement("li");
+          liTotal.innerHTML = `<strong>Total: $${total}</strong>`;
+          carrito.appendChild(liTotal);
+        })
+        .catch((err) => {
+          carrito.innerHTML = `<li class="text-red-600">Error al cargar el carrito.</li>`;
+          comprarBtn.disabled = true;
+        });
+
+      comprarBtn.addEventListener("click", async () => {
+        const res = await fetch("/api/compra", {
+          method: "POST",
+          headers: { Authorization: "Bearer " + token },
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert("Compra realizada con éxito");
+          window.location.reload();
+        } else {
+          alert(data.message || "No se pudo finalizar la compra");
+        }
+      });
+    </script>
+  </body>
+</html>
