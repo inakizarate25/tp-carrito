@@ -43,3 +43,4 @@
 [2025-07-04T23:38:04.297Z] POST /api/compra - 200
 [2025-07-04T23:38:06.535Z] GET /api/carrito - 404
 [2025-07-04T23:38:08.914Z] GET /api/productos - 200
+[2025-07-13T21:49:05.197Z] GET /api/productos - 200
