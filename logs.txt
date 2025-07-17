@@ -75,3 +75,9 @@
 [2025-07-17T20:20:33.522Z] POST /api/compra - 200
 [2025-07-17T20:20:35.118Z] GET /api/carrito - 404
 [2025-07-17T20:20:37.360Z] GET /api/productos - 200
+[2025-07-17T20:24:00.485Z] GET /api/productos - 200
+[2025-07-17T20:34:25.315Z] GET /api/logs - 401
+[2025-07-17T20:35:35.379Z] POST /api/login - 200
+[2025-07-17T20:36:18.193Z] GET /api/logs - 401
+[2025-07-17T20:36:50.926Z] GET /api/logs - 200
+[2025-07-17T20:41:29.961Z] GET /api/logs - 401
